@@ -1,0 +1,11 @@
+baseURL = "https://show.vev.su/"
+title = "Телепередачи"
+defaultContentLanguage = "ru"
+languageCode = "ru-ru"
+publishdir = "./docs"
+
+[params]
+  subtitle = "Подборки телепередач и телешоу"
+  description = "Советуем, что и как смотреть"
+  googleTagManagerId = "GTM-M5HZVHN"
+  storageMedia = "https://ams.su"

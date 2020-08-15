@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="{{ .Language }}">
+<head itemscope itemtype="{{ .Site.BaseURL }}">
+    <meta charset="UTF-8">
+    {{ if not .Site.IsServer }}
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','{{ .Site.Params.googleTagManagerId }}');</script>
+    <!-- End Google Tag Manager -->
+    {{ end }}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {{ $title := printf "%s &middot; %s" .Title .Params.OriginalTitle | safeHTML }}
+    <title>{{ $title }}</title>
+
+    {{ $options := (dict "targetPath" "css/style.css" "outputStyle" "compressed" "enableSourceMap" true) }}
+    {{ $style := resources.Get "sass/main.scss" | resources.ExecuteAsTemplate "main.scss" . | resources.ToCSS $options | resources.Minify | resources.Fingerprint }}
+    <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
+</head>
+<body>
+{{ if not .Site.IsServer }}
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ .Site.Params.googleTagManagerId }}"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+{{ end }}
+<header>
+    <a href="{{ .Site.BaseURL }}" class="logo-link"><span>V</span><span>E</span><span>V</span></a>
+    <h1 class="page-header-title"><span>{{ .Title }}</span> &middot; <span>{{ .Params.OriginalTitle }}</span></h1>
+</header>
+<main>
+<section class="articles">
+
+{{ range $IMDb := .Params.list }}
+{{ with (getJSON (printf "%s/%s/index.json?%d" $.Site.Params.storageMedia (trim $IMDb "tt") now.Unix)) }}
+{{ $info := . }}
+<article>
+    <h3 class="article-title">{{ $info.titles.ru }}</h3>
+    <div class="article-trailer">
+        {{ with $info.trailer }}
+        <iframe width="480"
+        height="270"
+        src="{{ . }}"
+        frameborder="0"
+        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen></iframe>
+        {{ end }}
+    </div>
+    <div class="article-synopsis">
+        <table class="article-details">
+            <tbody>
+            <tr>
+                <td>Оригинальное название</td>
+                <td>{{ $info.title }}</td>
+            </tr>
+            <tr>
+                <td>Дата премьеры</td>
+                <td>{{ $info.premiere | time.Format "02.01.2006" }}</td>
+            </tr>
+            <tr>
+                <td>Кинопоиск</td>
+                <td><a href="https://www.kinopoisk.ru/film/{{ $info.kinopoisk }}/" target="_blank">{{ $info.kinopoisk }}</a></td>
+            </tr>
+            <tr>
+                <td>IMDb</td>
+                <td><a href="https://www.imdb.com/title/{{ $info.imdb }}/" target="_blank">{{ $info.imdb }}</a></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="link-to-watch">
+                    <a href="{{ printf "%s/%s/" $.Site.Params.storageMedia (trim $IMDb "tt") }}" class="watch ams"><span>A</span><span>M</span><span>S</span></a>
+                    {{range $service, $link := $info.watch }}
+                    <a href="{{ $link }}" class="watch {{ $service }}">{{ $service }}</a>
+                    {{ end }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="synopsis-text">{{ with $info.description }}{{. | safeHTML }}{{ end }}</div>
+    </div>
+</article>
+{{ end }}
+{{ end }}
+</section>
+</main>
+<footer>
+<p class="copyright">&copy; VEV {{ now.Year }}</p>
+</footer>
+</body>
+</html>
