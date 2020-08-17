@@ -306,5 +306,19 @@ body {
     grid-area: footer;
     padding: 1em;
     text-align: right;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid whitesmoke;
+    box-sizing: border-box;
+    margin: 0 5%;
+
+    a {
+      text-decoration: none;
+      outline: none;
+      color: inherit;
+    }
   }
 }

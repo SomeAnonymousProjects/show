@@ -1,0 +1,9 @@
+<header>
+    {{ if .IsHome }}
+    <a href="https://vev.su/" class="logo-link"><span>V</span><span>E</span><span>V</span></a>
+    <h1>{{ .Site.Title }}</h1>
+    {{ else }}
+    <a href="{{ .Site.BaseURL }}" class="logo-link"><span>V</span><span>E</span><span>V</span></a>
+    <h1><span>{{ .Title }}</span> &middot; <span>{{ .Params.OriginalTitle }}</span></h1>
+    {{ end }}
+</header>

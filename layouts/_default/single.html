@@ -1,7 +1,8 @@
 <!doctype html>
 <html lang="{{ .Language }}">
 <head itemscope itemtype="{{ .Site.BaseURL }}">
-    <meta charset="UTF-8">
+    {{- partial "_head.html" . -}}
+
     {{ if not .Site.IsServer }}
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -11,14 +12,26 @@
     })(window,document,'script','dataLayer','{{ .Site.Params.googleTagManagerId }}');</script>
     <!-- End Google Tag Manager -->
     {{ end }}
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
     {{ $title := printf "%s &middot; %s" .Title .Params.OriginalTitle | safeHTML }}
     <title>{{ $title }}</title>
+    <meta property="og:title" content="{{ $title }}"/>
+    <meta name="twitter:title" content="{{ $title }}"/>
+    <meta itemprop="name" content="{{ $title }}"/>
+    <meta name="application-name" content="{{ $title }}"/>
+    <meta property="og:site_name" content="{{ .Site.Title }}"/>
+
+    {{ $desc := .Description | default .Site.Params.description }}
+    <meta name="description" content="{{ $desc }}"/>
+    <meta itemprop="description" content="{{ $desc }}"/>
+    <meta property="og:description" content="{{ $desc }}"/>
+    <meta name="twitter:description" content="{{ $desc }}"/>
 
     {{ $options := (dict "targetPath" "css/style.css" "outputStyle" "compressed" "enableSourceMap" true) }}
     {{ $style := resources.Get "sass/main.scss" | resources.ExecuteAsTemplate "main.scss" . | resources.ToCSS $options | resources.Minify | resources.Fingerprint }}
     <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
+
+    <script src="/js/script.js"></script></head>
 </head>
 <body>
 {{ if not .Site.IsServer }}
@@ -27,10 +40,9 @@
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 {{ end }}
-<header>
-    <a href="{{ .Site.BaseURL }}" class="logo-link"><span>V</span><span>E</span><span>V</span></a>
-    <h1 class="page-header-title"><span>{{ .Title }}</span> &middot; <span>{{ .Params.OriginalTitle }}</span></h1>
-</header>
+
+{{- partial "_header.html" . -}}
+
 <main>
 <section class="articles">
 
@@ -85,8 +97,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 {{ end }}
 </section>
 </main>
-<footer>
-<p class="copyright">&copy; VEV {{ now.Year }}</p>
-</footer>
+
+{{- partial "_footer.html" . -}}
+
 </body>
 </html>
